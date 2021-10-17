@@ -1,0 +1,185 @@
+Answers for joins:
+1.  select ename,job,sal*12,dname from emp e inner join dept d on e.deptno = d.deptno where sal*12=30000 and job != 'clerk';
+Empty set (0.00 sec)
+2.select e1.ename,e1.empno,e2.ename as 'managername',e2.empno from emp e1,emp e2 where e1.mgr =e2.empno;
++--------+-------+-------------+-------+
+| ename  | empno | managername | empno |
++--------+-------+-------------+-------+
+| smith  |  7369 | ford        |  7902 |
+| allen  |  7499 | blake       |  7698 |
+| ward   |  7521 | blake       |  7698 |
+| jones  |  7566 | king        |  7839 |
+| martin |  7654 | blake       |  7698 |
+| blake  |  7698 | king        |  7839 |
+| clark  |  7782 | king        |  7839 |
+| scott  |  7788 | jones       |  7566 |
+| turner |  7844 | blake       |  7698 |
+| adams  |  7876 | scott       |  7788 |
+| james  |  7900 | blake       |  7698 |
+| ford   |  7902 | jones       |  7566 |
+| miller |  7934 | clark       |  7782 |
++--------+-------+-------------+-------+
+3.select e1.ename,e1.empno,e2.ename as 'managername',e2.empno from emp e1,emp e2 where e1.mgr =e2.empno;
++--------+-------+-------------+-------+
+| ename  | empno | managername | empno |
++--------+-------+-------------+-------+
+| smith  |  7369 | ford        |  7902 |
+| allen  |  7499 | blake       |  7698 |
+| ward   |  7521 | blake       |  7698 |
+| jones  |  7566 | king        |  7839 |
+| martin |  7654 | blake       |  7698 |
+| blake  |  7698 | king        |  7839 |
+| clark  |  7782 | king        |  7839 |
+| scott  |  7788 | jones       |  7566 |
+| turner |  7844 | blake       |  7698 |
+| adams  |  7876 | scott       |  7788 |
+| james  |  7900 | blake       |  7698 |
+| ford   |  7902 | jones       |  7566 |
+| miller |  7934 | clark       |  7782 |
++--------+-------+-------------+-------+
+4. select dname,sum(sal) from emp e join dept d on e.deptno=d.deptno group by dname;
++------------+----------+
+| dname      | sum(sal) |
++------------+----------+
+| accounting |     8750 |
+| research   |    10875 |
+| sales      |     9400 |
++------------+----------+
+5. select ename,dname from emp e join dept d on e.deptno = d.deptno;
++--------+------------+
+| ename  | dname      |
++--------+------------+
+| smith  | research   |
+| allen  | sales      |
+| ward   | sales      |
+| jones  | research   |
+| martin | sales      |
+| blake  | sales      |
+| clark  | accounting |
+| scott  | research   |
+| king   | accounting |
+| turner | sales      |
+| adams  | research   |
+| james  | sales      |
+| ford   | research   |
+| miller | accounting |
++--------+------------+
+6. select *, loc from dept d join emp e on d.deptno=e.deptno where comm is not null;
++--------+------------+----------+-------+--------+----------+------+------------+------+------+--------+----------+
+| deptno | dname      | loc      | empno | ename  | job      | mgr  | hiredate   | sal  | comm | deptno | loc      |
++--------+------------+----------+-------+--------+----------+------+------------+------+------+--------+----------+
+|     30 | sales      | chicago  |  7499 | allen  | salesman | 7698 | 1981-02-20 | 1600 |  300 |     30 | chicago  |
+|     30 | sales      | chicago  |  7521 | ward   | salesman | 7698 | 1981-02-17 | 1250 |  500 |     30 | chicago  |
+|     30 | sales      | chicago  |  7654 | martin | salesman | 7698 | 1981-09-28 | 1250 | 1400 |     30 | chicago  |
+|     30 | sales      | chicago  |  7844 | turner | salesman | 7698 | 1981-09-08 | 1500 |    0 |     30 | chicago  |
+|     10 | accounting | new york |  7934 | miller | clerk    | 7782 | 1982-01-23 | 1300 |    0 |     10 | new york |
++--------+------------+----------+-------+--------+----------+------+------------+------+------+--------+----------+
+7.select dname,min(sal),ename from emp e join dept d on e.deptno=d.deptno where mgr is null;
++------------+----------+-------+
+| dname      | min(sal) | ename |
++------------+----------+-------+
+| accounting |     5000 | king  |
++------------+----------+-------+
+8.select dname,loc from dept d join emp e on d.deptno=e.deptno where mgr=(select empno from emp where ename='smith');
+Empty set (0.02 sec)
+9.select dname,loc from emp e join dept d on e.deptno=d.deptno where empno =(select mgr from emp where empno=(select distinct mgr from emp where job = 'salesman'));
++------------+----------+
+| dname      | loc      |
++------------+----------+
+| accounting | new york |
++------------+----------+
+10.select ename from emp e inner join dept d on e.deptno=d.deptno where e.deptno=(select deptno from dept where dname ='research') and empno in(select empno from emp where job ='manager');
++-------+
+| ename |
++-------+
+| jones |
++-------+
+11.select * from emp where sal<(select sal from emp where empno=(select mgr from emp where ename='blake'));
++-------+--------+----------+------+------------+------+------+--------+
+| empno | ename  | job      | mgr  | hiredate   | sal  | comm | deptno |
++-------+--------+----------+------+------------+------+------+--------+
+|  7369 | smith  | clerk    | 7902 | 1980-12-17 |  800 | NULL |     20 |
+|  7499 | allen  | salesman | 7698 | 1981-02-20 | 1600 |  300 |     30 |
+|  7521 | ward   | salesman | 7698 | 1981-02-17 | 1250 |  500 |     30 |
+|  7566 | jones  | manager  | 7839 | 1981-04-02 | 2975 | NULL |     20 |
+|  7654 | martin | salesman | 7698 | 1981-09-28 | 1250 | 1400 |     30 |
+|  7698 | blake  | manager  | 7839 | 1981-05-01 | 2850 | NULL |     30 |
+|  7782 | clark  | manager  | 7839 | 1981-06-09 | 2450 | NULL |     10 |
+|  7788 | scott  | analyst  | 7566 | 1987-04-19 | 3000 | NULL |     20 |
+|  7844 | turner | salesman | 7698 | 1981-09-08 | 1500 |    0 |     30 |
+|  7876 | adams  | clerk    | 7788 | 1987-05-23 | 1100 | NULL |     20 |
+|  7900 | james  | clerk    | 7698 | 1981-12-03 |  950 | NULL |     30 |
+|  7902 | ford   | analyst  | 7566 | 1981-12-03 | 3000 | NULL |     20 |
+|  7934 | miller | clerk    | 7782 | 1982-01-23 | 1300 |    0 |     10 |
++-------+--------+----------+------+------------+------+------+--------+
+12.select emp.*,dname, loc from emp,dept where job='analyst' and mgr = (select empno from emp where ename='blake');
+13. select ename ,comm,hiredate from emp where empno =(select mgr from emp where ename ='ford');
++-------+------+------------+
+| ename | comm | hiredate   |
++-------+------+------------+
+| jones | NULL | 1981-04-02 |
++-------+------+------------+
+14. select ename ,dname from emp e inner join dept d on e.deptno=d.deptno where sal<(select avg(sal) from emp where deptno =30);
++--------+------------+
+| ename  | dname      |
++--------+------------+
+| smith  | research   |
+| ward   | sales      |
+| martin | sales      |
+| turner | sales      |
+| adams  | research   |
+| james  | sales      |
+| miller | accounting |
++--------+------------+
+15.select ename,dname,loc from emp e inner join dept d on e.deptno = d.deptno where empno in (select empno from emp where mgr =(select empno from emp where  ename ='jones'));
++-------+----------+--------+
+| ename | dname    | loc    |
++-------+----------+--------+
+| scott | research | dallas |
+| ford  | research | dallas |
++-------+----------+--------+
+16.select ename,dname from emp e inner join dept d on e.deptno =d.deptno where ename like 's%';
++-------+----------+
+| ename | dname    |
++-------+----------+
+| smith | research |
+| scott | research |
++-------+----------+
+17.select dname from dept where deptno not in(select deptno from emp);
++------------+
+| dname      |
++------------+
+| operations |
++------------+
+18. select a.ename from emp a join emp b on a.comm=b.comm and a.empno != b.empno;
++--------+
+| ename  |
++--------+
+| miller |
+| turner |
+19.select ename,dname from emp e left join dept d on e.deptno = d.deptno union select ename,dname from emp e right join dept d on e.deptno = d.deptno;
++--------+------------+
+| ename  | dname      |
++--------+------------+
+| clark  | accounting |
+| king   | accounting |
+| miller | accounting |
+| smith  | research   |
+| jones  | research   |
+| scott  | research   |
+| adams  | research   |
+| ford   | research   |
+| allen  | sales      |
+| ward   | sales      |
+| martin | sales      |
+| blake  | sales      |
+| turner | sales      |
+| james  | sales      |
+| NULL   | operations |
++--------+------------+
+20. select ename,job,dname,loc from emp e inner join dept d on e.deptno = d.deptno where job = 'manager' and loc ='chicago';
++-------+---------+-------+---------+
+| ename | job     | dname | loc     |
++-------+---------+-------+---------+
+| blake | manager | sales | chicago |
++-------+---------+-------+---------+
